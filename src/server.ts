@@ -3,9 +3,16 @@
 import express from "express";
 import { getPayloadClient } from "./get-payload";
 import { nextApp, nextHandler } from "./next.utils";
+import * as trpcExpress from "@trpc/server/adapters/express";
+import { appRouter } from "./trpc";
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000; // constant that does not change hence all CAPS , process.env.PORT is string - hence converting it to number
+
+const createContext = ({
+  req,
+  res,
+}: trpcExpress.CreateExpressContextOptions) => ({ req, res });
 
 // Function to start server
 const start = async () => {
@@ -17,6 +24,15 @@ const start = async () => {
       },
     },
   }); //get database access
+
+  // when we get a request to this endpoint we need to forward it to trpc in nextjs
+  app.use(
+    "/api/trpc",
+    trpcExpress.createExpressMiddleware({
+      router: appRouter,
+      createContext,
+    })
+  );
 
   // app.use - Express middleware , forward it to nextHandler
   app.use((req, res) => nextHandler(req, res));
