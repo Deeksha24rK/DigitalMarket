@@ -1,14 +1,16 @@
-// Seperarte API endpoint that hanldes authentication logic
+// Seperarte API endpoint that handles authentication logic
 
 // Backend
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { getPayloadClient } from "../get-payload";
 import { AuthCredentialsValidator } from "../lib/validators/account-credentials-validator";
 import { publicProcedure, router } from "./trpc";
-import { getPayloadClient } from "../get-payload";
-import { TRPCError } from "@trpc/server";
 
 export const authRouter = router({
+  // Sign-up endpoint
   // create user inside of CMS
-  // publicProcedure - Signup endpoint is public
+  // publicProcedure - Signup endpoint is public , anyone should be able to call it
   createPayloadUser: publicProcedure
     .input(AuthCredentialsValidator)
     .mutation(async ({ input }) => {
@@ -27,7 +29,7 @@ export const authRouter = router({
 
       if (users.length !== 0) throw new TRPCError({ code: "CONFLICT" });
 
-      // if new user, create user
+      // if user does not exist, create user
       await payload.create({
         collection: "users",
         data: {
@@ -38,5 +40,51 @@ export const authRouter = router({
       });
 
       return { success: true, sentToEmail: email };
+    }),
+
+  // verify email endpoint - that lets us validate user email
+  // publicProcedure - Signup endpoint is public , anyone should be able to call it
+  VerifyEmail: publicProcedure
+    .input(z.object({ token: z.string() }))
+    // we can destructure input in mutation as we have add it above
+    // .query since we are reading data
+    .query(async ({ input }) => {
+      const { token } = input;
+
+      const payload = await getPayloadClient(); //access to CMS
+
+      // logic
+      const isVerified = await payload.verifyEmail({
+        collection: "users",
+        token,
+      });
+
+      if (!isVerified) throw new TRPCError({ code: "UNAUTHORIZED" });
+
+      return { success: true };
+    }),
+
+  // Sign-in endpoint
+  signIn: publicProcedure
+    .input(AuthCredentialsValidator)
+    .mutation(async ({ input, ctx }) => {
+      const { email, password } = input;
+      const { res } = ctx;
+      const payload = await getPayloadClient(); //access to CMS
+
+      try {
+        await payload.login({
+          collection: "users",
+          data: {
+            email,
+            password,
+          },
+          res,
+        });
+
+        return { success: true };
+      } catch (error) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+      }
     }),
 });
