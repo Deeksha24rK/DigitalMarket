@@ -6,6 +6,7 @@ import { buttonVariants } from "./ui/button";
 import Cart from "../../public/Cart";
 import { getServerSideUser } from "@/lib/payload-utils";
 import { cookies } from "next/headers";
+import UserAccountNav from "./UserAccountNav";
 
 const Navbar = async () => {
   const nextCookies = cookies();
@@ -46,7 +47,7 @@ const Navbar = async () => {
 
                   {/* if no user => Create account button */}
                   {user ? (
-                    <p></p>
+                    <UserAccountNav user={user} />
                   ) : (
                     <Link
                       href="/sign-up"
