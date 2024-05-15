@@ -1,10 +1,9 @@
 "use client";
 
-import { pages } from "next/dist/build/templates/app-page";
-import { TQueryValidator } from "../lib/validators/query-validator";
-import { trpc } from "../trpc/client";
 import Link from "next/link";
+import { TQueryValidator } from "../lib/validators/query-validator";
 import { Product } from "../payload-types";
+import { trpc } from "../trpc/client";
 import ProductListing from "./ProductListing";
 
 interface ProductReelProps {
