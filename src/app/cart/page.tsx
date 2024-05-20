@@ -18,6 +18,7 @@ const Cart = () => {
   const { mutate: createCheckoutSession, isLoading } =
     trpc.payment.createSession.useMutation({
       onSuccess: ({ url }) => {
+        console.log("checkout");
         if (url) router.push(url);
       },
     });
