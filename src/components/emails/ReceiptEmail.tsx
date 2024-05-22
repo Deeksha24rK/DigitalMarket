@@ -16,6 +16,7 @@ import {
 import { Product } from "../../payload-types";
 import { formatPrice } from "../../lib/utils";
 import { format } from "date-fns";
+import * as React from "react";
 
 interface ReceiptEmailProps {
   email: string;
