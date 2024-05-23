@@ -4,8 +4,8 @@ import { formatPrice } from "@/lib/utils";
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { buttonVariants } from "../src/components/ui/button";
-import { Separator } from "../src/components/ui/separator";
+import { buttonVariants } from "./ui/button";
+import { Separator } from "./ui/separator";
 import {
   Sheet,
   SheetContent,
@@ -13,7 +13,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "../src/components/ui/sheet";
+} from "./ui/sheet";
 import { useCart } from "@/hooks/use-cart";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import CartItem from "@/components/CartItem";
